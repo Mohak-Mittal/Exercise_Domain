@@ -41,14 +41,87 @@ function loadStreakBadge(user) {
 
 // ===== TODAY'S TASKS =====
 function loadTodayTasks(user, plan) {
-  const streak      = getStreak(user);
-  const dayIndex    = (streak.total % 7);
-  const todayPlan   = plan.days[dayIndex];
-  const taskList    = document.getElementById('taskList');
-  const completeBtn = document.getElementById('completeBtn');
-  const dayLabel    = document.getElementById('today-day-label');
+  const streak     = getStreak(user);
+  const dayIndex   = streak.total % 7;
+  const todayPlan  = plan.days[dayIndex];
+  const taskList   = document.getElementById('taskList');
+  const completeBtn= document.getElementById('completeBtn');
+  const dayLabel   = document.getElementById('today-day-label');
 
   dayLabel.textContent = `Day ${streak.total + 1} — ${todayPlan.name}`;
+
+  const weekNum    = Math.floor(streak.total / 7);
+  const multiplier = 1 + (weekNum * 0.1);
+
+  let taskState = getTaskState(user);
+  if (!taskState) {
+    taskState = todayPlan.exercises.map((ex, i) => ({
+      id:     i,
+      name:   ex.name,
+      emoji:  ex.emoji || '💪',
+      sets:   Math.round(ex.sets * multiplier),
+      reps:   ex.reps,
+      rest:   ex.rest,
+      detail: ex.detail,
+      done:   false
+    }));
+    saveTaskState(user, taskState);
+  }
+
+  // ===== EXERCISE SECTION =====
+  taskList.innerHTML = `
+    <div class="today-section-label">🏋️ Exercises</div>
+    ${taskState.map((task, i) => `
+      <div class="task-item ${task.done ? 'done' : ''}" onclick="toggleTask('${user}', ${i}, null, null)">
+        <div class="task-emoji">${task.emoji}</div>
+        <div class="task-checkbox">${task.done ? '✓' : ''}</div>
+        <div class="task-info">
+          <div class="task-name">${task.name}</div>
+          <div class="task-detail">${task.sets} sets × ${task.reps} — Rest: ${task.rest}</div>
+          <div class="task-tip">${task.detail}</div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+
+  // ===== MEAL SECTION =====
+  if (todayPlan.meals) {
+    const meals = todayPlan.meals;
+    const mealEmojis = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
+    const mealColors = { breakfast: 'var(--gold)', lunch: 'var(--red-light)', dinner: '#818CF8', snack: 'var(--success)' };
+
+    taskList.innerHTML += `
+      <div class="today-section-label" style="margin-top:28px;">🥗 Today's Meals</div>
+      <div class="meals-grid">
+        ${Object.entries(meals).map(([type, meal]) => `
+          <div class="meal-card">
+            <div class="meal-header">
+              <span class="meal-emoji">${mealEmojis[type]}</span>
+              <span class="meal-type" style="color:${mealColors[type]}">${capitalize(type)}</span>
+            </div>
+            <div class="meal-name">${meal.name}</div>
+            <div class="meal-detail">${meal.detail}</div>
+            <div class="meal-macros">
+              <span class="macro"><span class="macro-val">${meal.calories}</span> kcal</span>
+              <span class="macro"><span class="macro-val">${meal.protein}g</span> protein</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  updateRing(taskState);
+
+  const alreadyDone = getLastDone(user) === getTodayKey();
+  const allDone     = taskState.every(t => t.done);
+
+  if (allDone && !alreadyDone) {
+    completeBtn.classList.remove('hidden');
+  } else {
+    completeBtn.classList.add('hidden');
+  }
+}
 
   // Progressive difficulty multiplier
   const weekNum     = Math.floor(streak.total / 7);
@@ -101,9 +174,12 @@ function toggleTask(user, index, taskState, plan) {
   const alreadyDone = getLastDone(user) === getTodayKey();
   if (alreadyDone) return;
 
-  taskState[index].done = !taskState[index].done;
-  saveTaskState(user, taskState);
-  loadTodayTasks(user, plan);
+  const state = getTaskState(user);
+  state[index].done = !state[index].done;
+  saveTaskState(user, state);
+
+  const p = getPlan(user);
+  loadTodayTasks(user, p);
 }
 
 // ===== UPDATE RING =====
@@ -162,20 +238,60 @@ function loadStreakSection(user) {
   document.getElementById('streak-best').textContent    = streak.best;
   document.getElementById('streak-total').textContent   = streak.total;
 
+  // ===== CALENDAR =====
   const calendar = document.getElementById('streakCalendar');
   calendar.innerHTML = '';
-
   for (let i = 29; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const key     = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-    const isDone  = streak.history.includes(key);
-    const isToday = i === 0;
-    const el      = document.createElement('div');
-    el.className  = `cal-day ${isDone ? 'completed' : ''} ${isToday ? 'today' : ''}`;
+    const key    = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    const isDone = streak.history.includes(key);
+    const isToday= i === 0;
+    const el     = document.createElement('div');
+    el.className = `cal-day ${isDone ? 'completed' : ''} ${isToday ? 'today' : ''}`;
     el.textContent = d.getDate();
     calendar.appendChild(el);
   }
+
+  // ===== ACHIEVEMENTS =====
+  const achievements = [
+    { id: 1,  streak: 1,   icon: '🌱', title: 'First Step',        desc: 'Complete your first day'           },
+    { id: 2,  streak: 3,   icon: '🔥', title: 'On Fire',           desc: '3 days in a row'                   },
+    { id: 3,  streak: 7,   icon: '⚡', title: 'One Week Warrior',  desc: 'Full week completed'               },
+    { id: 4,  streak: 10,  icon: '💪', title: 'Iron Will',         desc: '10 day streak achieved'            },
+    { id: 5,  streak: 14,  icon: '🏅', title: 'Two Week Beast',    desc: '14 consecutive days'               },
+    { id: 6,  streak: 21,  icon: '🧠', title: 'Habit Formed',      desc: 'Science says 21 days = habit'      },
+    { id: 7,  streak: 30,  icon: '🏆', title: 'Month Crusher',     desc: 'Full month of consistency'         },
+    { id: 8,  streak: 45,  icon: '💎', title: 'Diamond Grinder',   desc: '45 days of pure dedication'        },
+    { id: 9,  streak: 60,  icon: '🚀', title: 'Rocket Mode',       desc: '60 days — you\'re unstoppable'     },
+    { id: 10, streak: 75,  icon: '👑', title: 'Royalty',           desc: '75 days of elite performance'      },
+    { id: 11, streak: 90,  icon: '🌟', title: '90 Day Legend',     desc: 'Three months of greatness'         },
+    { id: 12, streak: 100, icon: '💯', title: 'Century Club',      desc: '100 day milestone unlocked'        },
+    { id: 13, streak: 120, icon: '🔱', title: 'Poseidon',          desc: '120 days of relentless grind'      },
+    { id: 14, streak: 150, icon: '⚔️', title: 'Spartan',           desc: '150 days — warrior mentality'      },
+    { id: 15, streak: 180, icon: '🌊', title: 'Half Year Hero',    desc: 'Six months of pure discipline'     },
+    { id: 16, streak: 200, icon: '🛡️', title: 'Ironclad',          desc: '200 days unbroken'                 },
+    { id: 17, streak: 250, icon: '🌙', title: 'Dark Knight',       desc: '250 days in the shadows grinding'  },
+    { id: 18, streak: 300, icon: '☀️', title: 'Solar Flare',       desc: '300 days burning bright'           },
+    { id: 19, streak: 365, icon: '🎖️', title: 'Full Year God',     desc: 'An entire year of consistency'     },
+    { id: 20, streak: 500, icon: '🌌', title: 'Transcendent',      desc: '500 days — you are legendary'      },
+  ];
+
+  const achGrid = document.getElementById('achievementGrid');
+  achGrid.innerHTML = achievements.map(a => {
+    const unlocked = streak.best >= a.streak;
+    const isNext   = !unlocked && achievements.find(x => !streak.best >= x.streak) === a;
+    return `
+      <div class="achievement-card ${unlocked ? 'unlocked' : 'locked'}">
+        <div class="ach-icon">${unlocked ? a.icon : '🔒'}</div>
+        <div class="ach-info">
+          <div class="ach-title">${a.title}</div>
+          <div class="ach-desc">${unlocked ? a.desc : `Reach ${a.streak} day streak`}</div>
+        </div>
+        ${unlocked ? '<div class="ach-badge">✓</div>' : ''}
+      </div>
+    `;
+  }).join('');
 }
 
 // ===== PROGRESS SECTION =====
@@ -184,14 +300,30 @@ function loadProgressSection(user, profile) {
   document.getElementById('prog-current').textContent = profile.currentWeight;
   document.getElementById('prog-target').textContent  = profile.targetWeight;
 
-  const totalToLose = profile.startWeight - profile.targetWeight;
-  const lost        = profile.startWeight - profile.currentWeight;
-  const percent     = totalToLose <= 0 ? 100 : Math.max(0, Math.min(100, Math.round((lost / totalToLose) * 100)));
+  const start   = parseFloat(profile.startWeight);
+  const current = parseFloat(profile.currentWeight);
+  const target  = parseFloat(profile.targetWeight);
+
+  let percent = 0;
+
+  if (target > start) {
+    // Goal is to GAIN weight
+    const totalToGain = target - start;
+    const gained      = current - start;
+    percent = totalToGain <= 0 ? 0 : Math.max(0, Math.min(100, Math.round((gained / totalToGain) * 100)));
+  } else if (target < start) {
+    // Goal is to LOSE weight
+    const totalToLose = start - target;
+    const lost        = start - current;
+    percent = totalToLose <= 0 ? 0 : Math.max(0, Math.min(100, Math.round((lost / totalToLose) * 100)));
+  } else {
+    percent = 100;
+  }
 
   document.getElementById('prog-percent').textContent      = `${percent}%`;
   document.getElementById('progressBarFill').style.width   = `${percent}%`;
-  document.getElementById('pb-start-label').textContent    = `${profile.startWeight}kg`;
-  document.getElementById('pb-target-label').textContent   = `${profile.targetWeight}kg`;
+  document.getElementById('pb-start-label').textContent    = `${start}kg`;
+  document.getElementById('pb-target-label').textContent   = `${target}kg`;
 }
 
 // ===== UPDATE WEIGHT =====

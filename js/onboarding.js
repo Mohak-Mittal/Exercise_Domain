@@ -143,7 +143,7 @@ async function generatePlan() {
 
 // ===== BUILD PROMPT =====
 function buildPrompt(p) {
-  return `You are a professional fitness coach. Create a personalized weekly exercise plan for this person:
+  return `You are a professional fitness and nutrition coach. Create a personalized weekly exercise and meal plan for this person:
 
 Name: ${p.name}
 Age: ${p.age}
@@ -157,11 +157,10 @@ Available Time Per Day: ${p.time} minutes
 Equipment: ${p.equipment}
 Injuries/Limitations: ${p.injuries || 'None'}
 
-Create a 7-day exercise plan. For each day provide 4-6 specific exercises with sets, reps, and rest times. Format it clearly with Day 1 through Day 7. Make it realistic, progressive, and achievable. Also include a brief note about how the plan will get progressively harder every 7 days as the streak grows.
+Create a 7-day exercise and meal plan. Return ONLY this exact JSON structure, no extra text:
 
-Return the plan as a JSON object with this exact structure:
 {
-  "summary": "brief 2 sentence overview of the plan",
+  "summary": "brief 2 sentence overview",
   "days": [
     {
       "day": 1,
@@ -169,18 +168,23 @@ Return the plan as a JSON object with this exact structure:
       "exercises": [
         {
           "name": "Exercise name",
+          "emoji": "relevant emoji for this exercise",
           "sets": 3,
           "reps": "12-15",
           "rest": "60 seconds",
           "detail": "brief form tip"
         }
-      ]
+      ],
+      "meals": {
+        "breakfast": { "name": "Meal name", "calories": 400, "protein": 25, "detail": "brief description" },
+        "lunch":     { "name": "Meal name", "calories": 600, "protein": 35, "detail": "brief description" },
+        "dinner":    { "name": "Meal name", "calories": 500, "protein": 30, "detail": "brief description" },
+        "snack":     { "name": "Meal name", "calories": 200, "protein": 10, "detail": "brief description" }
+      }
     }
   ],
   "progressionNote": "how it gets harder each week"
-}
-
-Return ONLY the JSON, no extra text.`;
+}`;
 }
 
 // ===== CALL GROQ VIA WORKER =====
