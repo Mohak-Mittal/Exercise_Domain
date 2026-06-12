@@ -68,7 +68,9 @@ function loadTodayTasks(user, plan) {
   }
 
   // ===== EXERCISE SECTION =====
-  let html = `<div class="today-section-label">🏋️ Exercises</div>`;
+  let html = `<div class="today-columns">
+  <div class="today-left">
+  <div class="today-section-label">🏋️ Exercises</div>`;
   taskState.forEach((task, i) => {
     html += `
       <div class="task-item ${task.done ? 'done' : ''}" onclick="toggleTask('${user}', ${i})">
@@ -82,7 +84,7 @@ function loadTodayTasks(user, plan) {
       </div>
     `;
   });
-
+  html += `</div><div class="today-right">`;
   // ===== MEAL SECTION =====
   if (todayPlan.meals) {
     const meals = todayPlan.meals;
@@ -107,7 +109,7 @@ function loadTodayTasks(user, plan) {
         </div>
       `;
     });
-    html += `</div>`;
+    html += `</div></div>`;
   }
 
   taskList.innerHTML = html;

@@ -156,6 +156,7 @@ Fitness Goal: ${p.goal}
 Available Time Per Day: ${p.time} minutes
 Equipment: ${p.equipment}
 Injuries/Limitations: ${p.injuries || 'None'}
+Dietary Preference: Vegetarian only. All meals must be 100% vegetarian, no meat, no fish, no eggs.
 
 Create a 7-day exercise and meal plan. Return ONLY this exact JSON structure, no extra text:
 

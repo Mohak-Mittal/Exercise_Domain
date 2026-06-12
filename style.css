@@ -1227,3 +1227,19 @@ p {
   .meals-grid { grid-template-columns: 1fr; }
   .achievement-grid { grid-template-columns: 1fr; }
 }
+
+.today-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.today-left, .today-right {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  .today-columns { grid-template-columns: 1fr; }
+}
