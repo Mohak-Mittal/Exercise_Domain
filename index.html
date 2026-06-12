@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FitForge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ========== PAGE: LOGIN ========== -->
+  <div class="page active" id="page-login">
+    <div class="auth-wrapper">
+
+      <!-- Left Panel -->
+      <div class="auth-left">
+        <div class="brand">
+          <div class="brand-icon">⚡</div>
+          <span class="brand-name">FitForge</span>
+        </div>
+        <div class="auth-hero">
+          <h1>Forge your <span class="gold">strongest</span> self.</h1>
+          <p>AI-powered exercise plans that evolve with you — every single day.</p>
+          <div class="stats-row">
+            <div class="stat">
+              <span class="stat-num">10K+</span>
+              <span class="stat-label">Active Users</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">94%</span>
+              <span class="stat-label">Goal Achieved</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">30+</span>
+              <span class="stat-label">Plans Generated</span>
+            </div>
+          </div>
+        </div>
+        <div class="auth-left-footer">
+          <p>"The body achieves what the mind believes."</p>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="auth-right">
+        <div class="auth-card">
+
+          <!-- Tab Switcher -->
+          <div class="tab-switcher">
+            <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" id="registerTab" onclick="switchTab('register')">Register</button>
+          </div>
+
+          <!-- Login Form -->
+          <div class="form-section" id="loginForm">
+            <h2>Welcome back</h2>
+            <p class="form-sub">Continue your journey.</p>
+            <div class="input-group">
+              <label>Username</label>
+              <input type="text" id="loginUsername" placeholder="Enter your username"/>
+            </div>
+            <div class="input-group">
+              <label>Password</label>
+              <input type="password" id="loginPassword" placeholder="Enter your password"/>
+            </div>
+            <div class="error-msg" id="loginError"></div>
+            <button class="btn-primary" onclick="handleLogin()">Login</button>
+          </div>
+
+          <!-- Register Form -->
+          <div class="form-section hidden" id="registerForm">
+            <h2>Create account</h2>
+            <p class="form-sub">Start your transformation today.</p>
+            <div class="input-group">
+              <label>Username</label>
+              <input type="text" id="regUsername" placeholder="Choose a username"/>
+            </div>
+            <div class="input-group">
+              <label>Password</label>
+              <input type="password" id="regPassword" placeholder="Create a password"/>
+            </div>
+            <div class="input-group">
+              <label>Confirm Password</label>
+              <input type="password" id="regConfirm" placeholder="Confirm your password"/>
+            </div>
+            <div class="error-msg" id="registerError"></div>
+            <button class="btn-primary" onclick="handleRegister()">Create Account</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: ONBOARDING ========== -->
+  <div class="page" id="page-onboarding">
+    <div class="onboarding-wrapper">
+
+      <div class="onboarding-header">
+        <div class="brand">
+          <div class="brand-icon">⚡</div>
+          <span class="brand-name">FitForge</span>
+        </div>
+        <div class="step-indicator">
+          <div class="step active" id="step-dot-1"></div>
+          <div class="step-line"></div>
+          <div class="step" id="step-dot-2"></div>
+          <div class="step-line"></div>
+          <div class="step" id="step-dot-3"></div>
+        </div>
+      </div>
+
+      <div class="onboarding-body">
+
+        <!-- Step 1: Personal Info -->
+        <div class="onboard-step active" id="onboard-step-1">
+          <div class="step-label">Step 1 of 3</div>
+          <h2>Tell us about <span class="gold">yourself</span></h2>
+          <p class="form-sub">We'll use this to personalize your plan.</p>
+          <div class="onboard-grid">
+            <div class="input-group">
+              <label>Full Name</label>
+              <input type="text" id="ob-name" placeholder="Your full name"/>
+            </div>
+            <div class="input-group">
+              <label>Age</label>
+              <input type="number" id="ob-age" placeholder="Your age" min="10" max="80"/>
+            </div>
+            <div class="input-group">
+              <label>Gender</label>
+              <select id="ob-gender">
+                <option value="" disabled selected>Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Height (cm)</label>
+              <input type="number" id="ob-height" placeholder="e.g. 175" min="100" max="250"/>
+            </div>
+          </div>
+          <div class="error-msg" id="step1Error"></div>
+          <button class="btn-primary" onclick="nextStep(1)">Continue →</button>
+        </div>
+
+        <!-- Step 2: Body Stats -->
+        <div class="onboard-step" id="onboard-step-2">
+          <div class="step-label">Step 2 of 3</div>
+          <h2>Your <span class="gold">body stats</span></h2>
+          <p class="form-sub">Be honest — this is just between you and your plan.</p>
+          <div class="onboard-grid">
+            <div class="input-group">
+              <label>Current Weight (kg)</label>
+              <input type="number" id="ob-weight" placeholder="e.g. 85" min="30" max="300"/>
+            </div>
+            <div class="input-group">
+              <label>Target Weight (kg)</label>
+              <input type="number" id="ob-target" placeholder="e.g. 70" min="30" max="300"/>
+            </div>
+            <div class="input-group">
+              <label>Activity Level</label>
+              <select id="ob-activity">
+                <option value="" disabled selected>Select level</option>
+                <option value="sedentary">Sedentary (no exercise)</option>
+                <option value="light">Light (1-2 days/week)</option>
+                <option value="moderate">Moderate (3-4 days/week)</option>
+                <option value="active">Active (5+ days/week)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Fitness Goal</label>
+              <select id="ob-goal">
+                <option value="" disabled selected>Select goal</option>
+                <option value="weight_loss">Weight Loss</option>
+                <option value="muscle_gain">Muscle Gain</option>
+                <option value="endurance">Build Endurance</option>
+                <option value="general">General Fitness</option>
+              </select>
+            </div>
+          </div>
+          <div class="error-msg" id="step2Error"></div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="prevStep(2)">← Back</button>
+            <button class="btn-primary" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Preferences -->
+        <div class="onboard-step" id="onboard-step-3">
+          <div class="step-label">Step 3 of 3</div>
+          <h2>Your <span class="gold">preferences</span></h2>
+          <p class="form-sub">Last step — almost there!</p>
+          <div class="onboard-grid">
+            <div class="input-group">
+              <label>Available Time Per Day</label>
+              <select id="ob-time">
+                <option value="" disabled selected>Select duration</option>
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="45">45 minutes</option>
+                <option value="60">60 minutes</option>
+                <option value="90">90+ minutes</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Equipment Access</label>
+              <select id="ob-equipment">
+                <option value="" disabled selected>Select option</option>
+                <option value="none">No Equipment (bodyweight only)</option>
+                <option value="minimal">Minimal (resistance bands, dumbbells)</option>
+                <option value="gym">Full Gym Access</option>
+              </select>
+            </div>
+            <div class="input-group full-width">
+              <label>Any Injuries or Limitations? (optional)</label>
+              <input type="text" id="ob-injuries" placeholder="e.g. bad knees, lower back pain"/>
+            </div>
+          </div>
+          <div class="error-msg" id="step3Error"></div>
+          <div class="generating-msg hidden" id="generatingMsg">
+            <div class="spinner"></div>
+            <span>AI is building your personalized plan...</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="prevStep(3)">← Back</button>
+            <button class="btn-primary" id="generateBtn" onclick="generatePlan()">Generate My Plan ⚡</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: DASHBOARD ========== -->
+  <div class="page" id="page-dashboard">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">FitForge</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="showSection('today', this)">
+  <span class="nav-icon">🏋️</span>
+  <span>Today's Plan</span>
+</button>
+<button class="nav-item" onclick="showSection('streak', this)">
+  <span class="nav-icon">🔥</span>
+  <span>Streak</span>
+</button>
+<button class="nav-item" onclick="showSection('progress', this)">
+  <span class="nav-icon">📊</span>
+  <span>Progress</span>
+</button>
+<button class="nav-item" onclick="showSection('profile', this)">
+  <span class="nav-icon">👤</span>
+  <span>Profile</span>
+</button>
+      </nav>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dash-main">
+
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div>
+          <h3 id="dash-greeting">Good morning!</h3>
+          <p id="dash-date" class="text-muted"></p>
+        </div>
+        <div class="topbar-right">
+          <div class="streak-badge">
+            <span>🔥</span>
+            <span id="topbar-streak">0 day streak</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Today's Plan -->
+      <div class="dash-section active" id="section-today">
+        <div class="section-header">
+          <h2>Today's <span class="gold">Workout</span></h2>
+          <p class="text-muted" id="today-day-label">Day 1</p>
+        </div>
+
+        <div class="progress-ring-wrapper">
+          <svg class="progress-ring" width="140" height="140" viewBox="0 0 140 140">
+            <circle class="ring-bg" cx="70" cy="70" r="58" fill="none" stroke-width="10"/>
+            <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="58" fill="none" stroke-width="10"
+              stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke-linecap="round"
+              transform="rotate(-90 70 70)"/>
+          </svg>
+          <div class="ring-center">
+            <span id="ring-percent">0%</span>
+            <span class="ring-label">Complete</span>
+          </div>
+        </div>
+
+        <div class="task-list" id="taskList">
+          <!-- Tasks injected by JS -->
+        </div>
+
+        <button class="btn-primary complete-btn hidden" id="completeBtn" onclick="completeDay()">
+          ✅ Mark Day Complete — Earn Streak
+        </button>
+      </div>
+
+      <!-- Section: Streak -->
+      <div class="dash-section" id="section-streak">
+        <div class="section-header">
+          <h2>Your <span class="gold">Streak</span></h2>
+          <p class="text-muted">Keep showing up every day.</p>
+        </div>
+        <div class="streak-grid">
+          <div class="streak-card big">
+            <span class="streak-icon">🔥</span>
+            <span class="streak-num" id="streak-current">0</span>
+            <span class="streak-label">Current Streak</span>
+          </div>
+          <div class="streak-card">
+            <span class="streak-icon">🏆</span>
+            <span class="streak-num" id="streak-best">0</span>
+            <span class="streak-label">Best Streak</span>
+          </div>
+          <div class="streak-card">
+            <span class="streak-icon">📅</span>
+            <span class="streak-num" id="streak-total">0</span>
+            <span class="streak-label">Total Days Done</span>
+          </div>
+        </div>
+        <div class="streak-calendar" id="streakCalendar">
+          <!-- Last 30 days injected by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Progress -->
+      <div class="dash-section" id="section-progress">
+        <div class="section-header">
+          <h2>Your <span class="gold">Progress</span></h2>
+          <p class="text-muted">Track your journey to the goal.</p>
+        </div>
+        <div class="progress-cards">
+          <div class="p-card">
+            <span class="p-label">Starting Weight</span>
+            <span class="p-val" id="prog-start">--</span>
+            <span class="p-unit">kg</span>
+          </div>
+          <div class="p-card">
+            <span class="p-label">Current Weight</span>
+            <span class="p-val" id="prog-current">--</span>
+            <span class="p-unit">kg</span>
+          </div>
+          <div class="p-card">
+            <span class="p-label">Target Weight</span>
+            <span class="p-val" id="prog-target">--</span>
+            <span class="p-unit">kg</span>
+          </div>
+          <div class="p-card gold-card">
+            <span class="p-label">Progress</span>
+            <span class="p-val" id="prog-percent">0%</span>
+            <span class="p-unit">to goal</span>
+          </div>
+        </div>
+        <div class="weight-update">
+          <h3>Update Current Weight</h3>
+          <div class="weight-input-row">
+            <input type="number" id="newWeight" placeholder="Enter today's weight (kg)" min="30" max="300"/>
+            <button class="btn-primary" onclick="updateWeight()">Update</button>
+          </div>
+          <div class="success-msg" id="weightSuccess"></div>
+        </div>
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+          <div class="progress-bar-labels">
+            <span id="pb-start-label">Start</span>
+            <span id="pb-target-label">Goal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Profile -->
+      <div class="dash-section" id="section-profile">
+        <div class="section-header">
+          <h2>Your <span class="gold">Profile</span></h2>
+          <p class="text-muted">Your details as entered during setup.</p>
+        </div>
+        <div class="profile-grid" id="profileGrid">
+          <!-- Injected by JS -->
+        </div>
+        <div class="plan-section">
+          <h3>Your AI Generated Plan</h3>
+          <div class="plan-box" id="planBox">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/onboarding.js"></script>
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>
