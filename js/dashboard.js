@@ -167,7 +167,7 @@ function loadTodayTasks(user, plan) {
   } else {
     completeBtn.classList.add('hidden');
   }
-}
+
 
 // ===== TOGGLE TASK =====
 function toggleTask(user, index, taskState, plan) {
