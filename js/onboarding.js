@@ -158,7 +158,9 @@ Equipment: ${p.equipment}
 Injuries/Limitations: ${p.injuries || 'None'}
 Dietary Preference: Vegetarian only. All meals must be 100% vegetarian, no meat, no fish, no eggs.
 
-Create a 7-day exercise and meal plan. Return ONLY this exact JSON structure, no extra text:
+IMPORTANT: Each day MUST have exactly 6 exercises. No less than 6.
+
+Return ONLY this exact JSON structure, no extra text:
 
 {
   "summary": "brief 2 sentence overview",
@@ -169,7 +171,7 @@ Create a 7-day exercise and meal plan. Return ONLY this exact JSON structure, no
       "exercises": [
         {
           "name": "Exercise name",
-          "emoji": "relevant emoji for this exercise",
+          "emoji": "relevant single emoji",
           "sets": 3,
           "reps": "12-15",
           "rest": "60 seconds",
@@ -185,7 +187,9 @@ Create a 7-day exercise and meal plan. Return ONLY this exact JSON structure, no
     }
   ],
   "progressionNote": "how it gets harder each week"
-}`;
+}
+
+Remember: exactly 6 exercises per day, all vegetarian meals, return ONLY JSON.`;
 }
 
 // ===== CALL GROQ VIA WORKER =====
